@@ -16,7 +16,7 @@ const App = () => {
   const [votes, setVotes] = useState({
     0: 0,
     1: 0,
-    2: 0,
+    2: 0, 
     3: 0,
     4: 0,
     5: 0,
@@ -24,9 +24,12 @@ const App = () => {
     7: 0,
   });
 
+  
+
   const handleClick = () => {
     setSelected(Math.floor(Math.random() * 8))
     console.log(selected);
+    
     
   }
 
