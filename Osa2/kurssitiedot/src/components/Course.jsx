@@ -2,11 +2,9 @@ import React from 'react'
 
 const Course = ( {courses} ) => {
 
-    const { parts, name } = courses
-
     return (
         <div>
-            {courses.map((course, index) => (
+            {courses.map((course) => (
                 <React.Fragment key={course.id}>
                     <Header name={course.name} />
                     <Content parts={course.parts} />
