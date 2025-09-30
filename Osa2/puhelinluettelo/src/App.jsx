@@ -1,14 +1,15 @@
-import { use, useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from 'react'
+import personService from "./services/persons.js"
 
 const App = () => {
   const [persons, setPersons] = useState([])
 
   useEffect(() => {
     console.log("useEffect ran");
-    axios.get("http://localhost:3001/persons")
-    .then(response => {
-      setPersons(response.data)
+    personService
+      .getAll()
+        .then(initialPersons => {
+        setPersons(initialPersons)
     })
   }, [])
 
@@ -28,9 +29,23 @@ const App = () => {
     console.log("Add button clicked");
 
     const personExists = persons.some(person => person.name.toLowerCase() === newName.toLowerCase());
+    const personToModify = persons.find(p => p.name.toLowerCase() === newName.toLowerCase())
 
     if (personExists) {
-      alert (`${newName} is already in the phonebook`)
+
+      const confirmUpdate = window.confirm(`${newName} is already added to phonebook, replace old number with the new one?`)
+
+      if (confirmUpdate) {
+        personService
+          .update(personToModify.id, {...personToModify, number: newPhoneNumber})
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== personToModify.id ? p : returnedPerson))
+          })
+          .catch(err => {
+            console.log("Modification failed:", err);
+          })
+      }
+
       return;
     }
 
@@ -39,13 +54,33 @@ const App = () => {
       number: newPhoneNumber,
     }
 
-    setPersons(persons.concat(newPerson));
+    personService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('');
+        setNewPhoneNumber('');
+      })
+  }
 
-    console.log(persons);
+  const handleDelete = (id, name) => {
+    console.log("Id to be deleted", id);
 
-    setNewName('');
-    setNewPhoneNumber('');
-  } 
+    const confirmDelete = window.confirm(`Delete ${name}?`)
+
+    if (confirmDelete) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+        })
+        .catch(err => {
+          console.log("Delete Failed:", err);
+          
+        })
+    }
+
+  }
   
 
   return (
@@ -57,7 +92,7 @@ const App = () => {
       <PersonForm handleAdd={handleAdd} newName={newName} newPhoneNumber={newPhoneNumber} setNewName={setNewName} setNewPhoneNumber={setNewPhoneNumber} />
 
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons}/>
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete}/>
     </div>
   )
 
@@ -89,12 +124,15 @@ const App = () => {
     )
   }
 
-  const Persons = ( {filteredPersons} ) => {
+  const Persons = ( {filteredPersons, handleDelete} ) => {
     
     return (
       <div>
-        {filteredPersons.map((person, index) => (
-          <p key={index}>{person.name} {person.number}</p>
+        {filteredPersons.map((person) => (
+          <div key={person.id}>
+          <p >{person.name} {person.number}</p> 
+          <button onClick={(e) => handleDelete(person.id, person.name)} >Delete</button>
+          </div>
         ))}
       </div>
     )
