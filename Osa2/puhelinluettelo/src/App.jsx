@@ -1,12 +1,16 @@
-import { use, useState } from 'react'
+import { use, useState, useEffect } from 'react'
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
+  const [persons, setPersons] = useState([])
+
+  useEffect(() => {
+    console.log("useEffect ran");
+    axios.get("http://localhost:3001/persons")
+    .then(response => {
+      setPersons(response.data)
+    })
+  }, [])
 
   const [newName, setNewName] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
@@ -18,6 +22,8 @@ const App = () => {
 
   const handleAdd = (e) => {
     e.preventDefault();
+    console.log(persons);
+    
 
     console.log("Add button clicked");
 
