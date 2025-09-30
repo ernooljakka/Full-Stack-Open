@@ -3,6 +3,10 @@ import personService from "./services/persons.js"
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newPhoneNumber, setNewPhoneNumber] = useState('')
+  const [filterTerm, setFilterTerm] = useState('')
+  const [message, setMessage] = useState({message: null, type: null})
 
   useEffect(() => {
     console.log("useEffect ran");
@@ -12,10 +16,6 @@ const App = () => {
         setPersons(initialPersons)
     })
   }, [])
-
-  const [newName, setNewName] = useState('')
-  const [newPhoneNumber, setNewPhoneNumber] = useState('')
-  const [filterTerm, setFilterTerm] = useState('')
 
   const filteredPersons = persons.filter(person => 
     person.name.toLowerCase().includes(filterTerm.toLowerCase())
@@ -40,12 +40,19 @@ const App = () => {
           .update(personToModify.id, {...personToModify, number: newPhoneNumber})
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== personToModify.id ? p : returnedPerson))
+            setMessage({message: `${returnedPerson.name}'s number updated`, type: 'success'})
+            setTimeout(() => {
+              setMessage({message: null, type: null})
+            }, 5000)
           })
           .catch(err => {
             console.log("Modification failed:", err);
+            setMessage({message: `Information of ${personToModify.name} is not on the server`, type: 'error'})
+            setTimeout(() => {
+              setMessage({message: null, type: null})
+            }, 5000)
           })
       }
-
       return;
     }
 
@@ -60,6 +67,18 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('');
         setNewPhoneNumber('');
+
+        setMessage({message: `Added ${returnedPerson.name}`, type: 'success'})
+        setTimeout(() => {
+          setMessage({message: null, type: null})
+        }, 5000)
+      })
+      .catch(err => {
+        console.log(err);
+        setMessage({message: `Adding ${newPerson.name} Failed`, type: 'error'})
+        setTimeout(() => {
+          setMessage({message: null, type: null})
+        }, 5000)
       })
   }
 
@@ -73,10 +92,17 @@ const App = () => {
         .deletePerson(id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
+          setMessage({message: `${name} deleted succesfully`, type: 'success'})
+          setTimeout(() => {
+            setMessage({message: null, type: null})
+          }, 5000)
         })
         .catch(err => {
           console.log("Delete Failed:", err);
-          
+          setMessage({message: `Deleting ${newPerson.name} Failed`, type: 'error'})
+          setTimeout(() => {
+            setMessage({message: null, type: null})
+          }, 5000)          
         })
     }
 
@@ -86,6 +112,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={message.message} type={message.type} />
       <Filter filterTerm={filterTerm} setFilterTerm={setFilterTerm} />
 
       <h3>Add new</h3>
@@ -137,5 +164,17 @@ const App = () => {
       </div>
     )
   }
+
+  const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={`${type}`}>
+      {message}
+    </div>
+  )
+}
 
 export default App
