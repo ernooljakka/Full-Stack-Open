@@ -18,34 +18,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 //const url = `mongodb+srv://fullstack:${password}@cluster0.sormewm.mongodb.net/Phonebook?retryWrites=true&w=majority&appName=Cluster0`
 
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "044-2312765"
-  },
-  {
-    id: "2",
-    name: "Jasmiina koski",
-    number: "044-2312343"
-  },
-  {
-    id: "3",
-    name: "Pekka Pouta",
-    number: "044-2312111"
-  },
-    {
-    id: "4",
-    name: "Rasmus Raisio",
-    number: "044-2312987"
-  },
-]
-
-const generateId = () => {
-  const newId = Math.floor(Math.random() * 10000)
-  return String(newId)
-}
-
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)
@@ -54,14 +26,14 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/info', (request, response) => {
 
-    const timeNow = new Date()
+  const timeNow = new Date()
 
-    Person.find({}).then(persons => {
-      response.send(`Phonebook has info for ${persons.length} people<br/>${timeNow}`)
-    })
+  Person.find({}).then(persons => {
+    response.send(`Phonebook has info for ${persons.length} people<br/>${timeNow}`)
+  })
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
 
   Person.findById(request.params.id).then((person) => {
     if (person) {
@@ -72,7 +44,7 @@ app.get('/api/persons/:id', (request, response) => {
   }).catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => {
       if (result) {
@@ -82,28 +54,28 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
+  const body = request.body
 
-    if (!body.name || !body.number) {
-        return response.status(400).json({
-            error: "Name or the number is missing from the request"
-        })
-    }
-
-    if (body.name.length < 3) {
-        return response.status(400).json({
-          error: "The lenght of the name needs to be minimum of 3 letters"
-        })
-    }
-
-    const person = new Person ({
-        name: body.name,
-        number: body.number
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'Name or the number is missing from the request'
     })
+  }
 
-    person.save().then(newPerson => {
-      response.json(person)
+  if (body.name.length < 3) {
+    return response.status(400).json({
+      error: 'The lenght of the name needs to be minimum of 3 letters'
     })
+  }
+
+  const person = new Person ({
+    name: body.name,
+    number: body.number
+  })
+
+  person.save().then(person => {
+    response.json(person)
+  })
     .catch(error => next(error))
 })
 
@@ -146,7 +118,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: "Accepted number formats are xx-xxxx... or xxx-xxxx..." })
+    return response.status(400).json({ error: 'Accepted number formats are xx-xxxx... or xxx-xxxx...' })
   }
 
   next(error)
