@@ -81,12 +81,18 @@ app.delete('/api/persons/:id', (request, response) => {
     }).catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if (!body.name || !body.number) {
         return response.status(400).json({
             error: "Name or the number is missing from the request"
+        })
+    }
+
+    if (body.name.length < 3) {
+        return response.status(400).json({
+          error: "The lenght of the name needs to be minimum of 3 letters"
         })
     }
 
@@ -98,9 +104,10 @@ app.post('/api/persons', (request, response) => {
     person.save().then(newPerson => {
       response.json(person)
     })
+    .catch(error => next(error))
 })
 
-app.put('/api/persons/:id', async (request, response) => {
+app.put('/api/persons/:id', async (request, response, next) => {
 
   const body = request.body
 
@@ -108,7 +115,7 @@ app.put('/api/persons/:id', async (request, response) => {
     const updatedPerson = await Person.findByIdAndUpdate(
       request.params.id,
       { number: body.number },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true}
     )
 
     if (updatedPerson) {
@@ -138,6 +145,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: "Accepted number formats are xx-xxxx... or xxx-xxxx..." })
   }
 
   next(error)

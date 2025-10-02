@@ -47,7 +47,7 @@ const App = () => {
           })
           .catch(err => {
             console.log("Modification failed:", err);
-            setMessage({message: `Information of ${personToModify.name} is not on the server`, type: 'error'})
+            setMessage({message: `${err.response.data.error}`, type: 'error'})
             setTimeout(() => {
               setMessage({message: null, type: null})
             }, 5000)
@@ -75,7 +75,7 @@ const App = () => {
       })
       .catch(err => {
         console.log(err);
-        setMessage({message: `Adding ${newPerson.name} Failed`, type: 'error'})
+        setMessage({message: `${err.response.data.error}`, type: 'error'})
         setTimeout(() => {
           setMessage({message: null, type: null})
         }, 5000)
