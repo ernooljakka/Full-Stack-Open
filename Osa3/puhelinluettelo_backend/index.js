@@ -2,6 +2,8 @@ const express = require('express')
 var morgan = require('morgan')
 const cors = require('cors')
 const path = require('path')
+require('dotenv').config()
+const Person = require('./models/person')
 
 const app = express()
 
@@ -12,6 +14,9 @@ app.use(express.static('dist'))
 morgan.token('body', (req) => JSON.stringify(req.body))
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+
+//const url = `mongodb+srv://fullstack:${password}@cluster0.sormewm.mongodb.net/Phonebook?retryWrites=true&w=majority&appName=Cluster0`
 
 let persons = [
   {
@@ -42,33 +47,38 @@ const generateId = () => {
 }
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/info', (request, response) => {
 
     const timeNow = new Date()
 
-    response.send(`Phonebook has info for ${persons.length} people<br/>${timeNow}`)
+    Person.find({}).then(persons => {
+      response.send(`Phonebook has info for ${persons.length} people<br/>${timeNow}`)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(p => p.id === id)
 
+  Person.findById(request.params.id).then((person) => {
     if (person) {
-    response.json(person)
+      response.json(person)
     } else {
-    response.status(404).end()
+      response.status(404).end()
     }
+  }).catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-
-    persons = persons.filter(p => p.id !== id)
-
-    response.status(204).end()
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      if (result) {
+        response.status(204).end()
+      }
+    }).catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
@@ -80,28 +90,35 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const person = {
-        id: generateId(),
+    const person = new Person ({
         name: body.name,
         number: body.number
-    }
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(newPerson => {
+      response.json(person)
+    })
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', async (request, response) => {
 
   const body = request.body
 
-  if (persons.some(p => p.name === body.name)) {
+  try {
+    const updatedPerson = await Person.findByIdAndUpdate(
+      request.params.id,
+      { number: body.number },
+      { new: true, runValidators: true }
+    )
 
-    const person = persons.find(p => p.name === body.name)
+    if (updatedPerson) {
+      response.json(updatedPerson)
+    } else {
+      response.status(404).json({ error: 'Person not found' })
+    }
 
-    person.number = body.number 
-
-    return response.json(person);
+  } catch (error) {
+    next(error)
   }
 })
 
@@ -109,8 +126,28 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
-const PORT = process.env.PORT || 3001
+// olemattomien osoitteiden käsittely
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+// tämä tulee kaikkien muiden middlewarejen ja routejen rekisteröinnin jälkeen!
+app.use(errorHandler)
+
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
