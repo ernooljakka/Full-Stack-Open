@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Understanding Async/Await in JavaScript",
-  "author": "Jane Doe",
-  "url": "https://example.com/async-await-guide",
+  "title": "Python perusteet",
+  "author": "Jukka the koodaaja",
+  "url": "https://example.com/",
   "likes": 42
 }
