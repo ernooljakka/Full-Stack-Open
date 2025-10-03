@@ -22,6 +22,10 @@ mongoose.connect(mongoUrl)
 app.use(express.json())
 app.use(middleware.requestLogger)
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the Blog API, go to /api/blogs to see the blogs');
+});
+
 app.use('/api/blogs', blogsRouter)
 
 app.use(middleware.unknownEndpoint)
