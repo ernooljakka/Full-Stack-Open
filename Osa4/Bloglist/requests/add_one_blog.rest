@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Python perusteet",
-  "author": "Jukka the koodaaja",
-  "url": "https://example.com/",
-  "likes": 42
+  "title": "JS ja React perusteet",
+  "author": "Simo the koodaaja",
+  "url": "https://example.com/JS_React",
+  "likes": 22
 }
