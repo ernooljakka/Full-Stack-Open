@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 const api = supertest(app)
 
@@ -23,7 +25,23 @@ const initialBlogs = [
 ]
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
+  await Blog.deleteMany({}) 
+  await User.deleteMany({})
+
+  const newUser = {
+    username: 'ernotestaa',
+    name: 'Erno',
+    password: 'password123',
+  }
+
+  await api.post('/api/users').send(newUser)
+
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: 'ernotestaa', password: 'password123' })
+
+  token = loginResponse.body.token
+
   let blogObject = new Blog(initialBlogs[0])
   await blogObject.save()
   blogObject = new Blog(initialBlogs[1])
@@ -68,6 +86,7 @@ describe('Adding a new note tests', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -90,6 +109,7 @@ describe('Adding a new note tests', () => {
 
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -106,6 +126,7 @@ describe('Adding a new note tests', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400)
   })
@@ -119,6 +140,7 @@ describe('Adding a new note tests', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400)
   })
@@ -127,11 +149,24 @@ describe('Adding a new note tests', () => {
 
 describe('deleting a blog', () => {
   test('deleting a blog with valid id succeeds with 204 and removes it from DB', async () => {
+    const blogToDelete = {
+      title: 'Blog to delete',
+      author: 'Erno',
+      url: 'http://example.com',
+    }
+
+    const blogResponse = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
+      .send(blogToDelete)
+
     const blogsAtStart = await Blog.find({})
-    const blogToDelete = blogsAtStart[0]
+
+    const blogId = blogResponse.body.id
 
     await api
-      .delete(`/api/blogs/${blogToDelete._id}`)
+      .delete(`/api/blogs/${blogId}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await Blog.find({})

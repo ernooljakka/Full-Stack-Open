@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2OGUzYTNjZTk0NTliZTExNjYwYzZjOGEiLCJpYXQiOjE3NTk4NDU1MTd9.P-nXILMpVpEeyCLjhlh2PNqTx4-jGULcmzCDM_klALU
 
 {
-  "title": "JS ja React perusteet",
-  "author": "Simo the koodaaja",
-  "url": "https://example.com/JS_React",
-  "likes": 22
+  "title": "Matikka 2",
+  "author": "matikkamies",
+  "url": "https://example.com/Matikka2",
+  "likes": 35
 }

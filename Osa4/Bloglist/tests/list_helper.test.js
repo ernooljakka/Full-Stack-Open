@@ -2,8 +2,6 @@ const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 
-
-
 test('dummy returns one', () => {
   const blogs = [
     { title: "First blog", author: "Alice", url: "https://example.com/", likes: 5 },
