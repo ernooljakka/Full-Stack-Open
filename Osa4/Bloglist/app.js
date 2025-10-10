@@ -6,8 +6,13 @@ const middleware = require('./utils/middleware')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
+const cors = require('cors')
 
 const app = express()
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+}))
 
 const mongoUrl = config.MONGODB_URI
 
