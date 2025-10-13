@@ -192,7 +192,6 @@ describe('Updating blogs likes by one', () => {
 
     assert.strictEqual(response.body.likes, blogToUpdate.likes + 1, 'Likes should be incremented')
 
-    // Optionally verify in DB
     const blogInDb = await Blog.findById(blogToUpdate._id)
     assert.strictEqual(blogInDb.likes, blogToUpdate.likes + 1, 'Likes in DB should be updated')
   })
