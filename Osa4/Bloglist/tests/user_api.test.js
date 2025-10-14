@@ -16,7 +16,7 @@ describe('when there is initially one user at db', () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
+    const user = new User({ username: 'root', name: 'rootish', passwordHash })
 
     await user.save()
   })
@@ -25,8 +25,8 @@ describe('when there is initially one user at db', () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-      username: 'ernooljakka',
-      name: 'Erno',
+      username: 'asdads',
+      name: 'Erno2',
       password: 'salainen',
     }
 
@@ -49,7 +49,7 @@ describe('when there is initially one user at db', () => {
 
     const newUser = {
       username: 'root',
-      name: 'Duplicate User',
+      name: 'Erno',
       password: 'salainen',
     }
 
@@ -98,5 +98,6 @@ describe('when there is initially one user at db', () => {
   })
 
 after(async () => {
+  await User.deleteMany({})
   await mongoose.connection.close()
 })

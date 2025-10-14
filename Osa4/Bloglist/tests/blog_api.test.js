@@ -199,5 +199,6 @@ describe('Updating blogs likes by one', () => {
 
 
 after(async () => {
+  await User.deleteMany({})
   await mongoose.connection.close()
 })

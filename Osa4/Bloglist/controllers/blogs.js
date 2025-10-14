@@ -7,7 +7,7 @@ const { tokenExtractor, userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
-    const blogs = await Blog.find({}).populate('user', '-blogs')
+    const blogs = await Blog.find({})
     response.json(blogs)
   } catch (error) {
     next(error)
@@ -36,6 +36,8 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response, n
     
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
+
+    await savedBlog.populate('user', '-blogs')
 
     response.json(savedBlog)
 

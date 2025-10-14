@@ -68,7 +68,7 @@ const App = () => {
       const newBlog = await blogService.create({ title, author, url })
       setBlogs(blogs.concat(newBlog))
 
-      setMessage({ message: `A new blog ${title} was added by ${author}`, type: 'success' })
+      setMessage({ message: `A new blog ${title} was added by ${user.name}`, type: 'success' })
 
       setTimeout(() => {
         setMessage({ message: null, type: null })
@@ -96,6 +96,9 @@ const App = () => {
     const updatedBlog = { ...blogToLike, likes: blogToLike.likes + 1 }
 
     const returnedBlog = await blogService.update(updatedBlog, id)
+
+    returnedBlog.user = blogToLike.user
+
     setBlogs(
       blogs
         .map(b => b.id !== id ? b : returnedBlog)
@@ -116,7 +119,7 @@ const App = () => {
       }, 5000)
 
     } catch (e) {
-      console.log('error:', e)
+      console.log('error:', e) 
       setMessage({ message: 'Something went wrong, did not remove the blog', type: 'error' })
 
       setTimeout(() => {
@@ -153,9 +156,9 @@ const App = () => {
             }
           </>
           <br />
-          {blogs.map(blog => (
-            <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete}/>
-          ))}
+          {blogs.map(blog => 
+            <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} currentUser={user}/>
+          )}
         </div>
       ) : (
         <>
