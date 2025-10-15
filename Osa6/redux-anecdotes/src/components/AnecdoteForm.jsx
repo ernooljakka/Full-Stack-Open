@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { addAnecdote } from '../actions/anecdoteActions'
 import { useDispatch } from 'react-redux'
+import { addAnecdote } from '../slices/anecdotesSlice'
+import { setMessage, clearMessage } from '../slices/notificationSlice'
 
 const AnecdoteFrom = () => {
   const dispatch = useDispatch()
@@ -12,8 +13,14 @@ const AnecdoteFrom = () => {
     console.log('Anecdote to be added:', newAnecdote);
     
     dispatch(addAnecdote(newAnecdote))
+    dispatch(setMessage(`You Added '${newAnecdote}'` ))
 
     setNewAnecdote('')
+
+    setTimeout(() => {
+      dispatch(clearMessage())
+    }, 5000)
+  
   }
 
   return (
