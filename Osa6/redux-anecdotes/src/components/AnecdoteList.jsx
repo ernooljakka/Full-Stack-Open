@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { voteAnecdote } from '../slices/anecdotesSlice'
-import { setMessage, clearMessage } from '../slices/notificationSlice'
+import { setNotification } from '../slices/notificationSlice'
+import { updateAnecdote } from '../slices/anecdotesSlice'
 
 const AnecdoteList = () => {
 
@@ -12,12 +12,9 @@ const AnecdoteList = () => {
   const sortedByLikes = [...anecdotes].sort((a,b) => b.votes - a.votes)
   const sortedByFilter = sortedByLikes.filter(a => a.content.toLowerCase().includes(filter.toLowerCase()))
 
-  const vote = (id, content) => {
-    dispatch(voteAnecdote(id));
-    dispatch(setMessage(`You voted '${content}'` ))
-    setTimeout(() => {
-      dispatch(clearMessage())
-    }, 5000)
+  const vote = (anecdote) => {
+    dispatch(updateAnecdote(anecdote))
+    dispatch(setNotification(`you voted '${anecdote.content}'`, 5))
   }
 
   return (
@@ -27,7 +24,7 @@ const AnecdoteList = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       ))}
