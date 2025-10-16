@@ -15,10 +15,31 @@ const useField = (type) => {
   }
 }
 
+const baseUrl = 'https://studies.cs.helsinki.fi/restcountries/'
+
+  /*useEffect(() => {
+    axios.get(`${baseUrl}api/all`)
+    .then(response => {
+      setCountries(response.data)
+      
+    })
+  }, [])*/
+
 const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
-  useEffect(() => {})
+  useEffect(() => {
+    if (!name) return
+
+    axios.get(`${baseUrl}api/all`)
+    .then(response => {
+      const allCountries = response.data
+      console.log(allCountries)
+      const searchedCountry = allCountries.find(c => c.name?.common.toLowerCase() === name.toLowerCase())
+      setCountry(searchedCountry || { notFound: true })
+    
+    })
+  }, [name])
 
   return country
 }
@@ -28,20 +49,16 @@ const Country = ({ country }) => {
     return null
   }
 
-  if (!country.found) {
-    return (
-      <div>
-        not found...
-      </div>
-    )
+  if (country.notFound) {
+    return <div>not found...</div>
   }
 
   return (
     <div>
-      <h3>{country.data.name} </h3>
-      <div>capital {country.data.capital} </div>
-      <div>population {country.data.population}</div> 
-      <img src={country.data.flag} height='100' alt={`flag of ${country.data.name}`}/>  
+      <h3>{country.name.common} </h3>
+      <div>capital {country.capital[0]} </div>
+      <div>population {country.population}</div> 
+      <img src={country.flags.png} height='100' alt={`flag of ${country.name.common}`}/>  
     </div>
   )
 }
