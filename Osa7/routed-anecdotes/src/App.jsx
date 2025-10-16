@@ -1,4 +1,10 @@
 import { useState } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link, useParams, useNavigate
+} from 'react-router-dom'
+import { useField } from './hooks'
+
 
 const Menu = () => {
   const padding = {
@@ -6,9 +12,9 @@ const Menu = () => {
   }
   return (
     <div>
-      <a href='#' style={padding}>anecdotes</a>
-      <a href='#' style={padding}>create new</a>
-      <a href='#' style={padding}>about</a>
+      <Link to={'/'} style={padding}>anecdotes</Link>
+      <Link to={'create'} style={padding}>create new</Link>
+      <Link to={'about'} style={padding}>about</Link>
     </div>
   )
 }
@@ -17,7 +23,7 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <Link to={`anecdotes/${anecdote.id}`} key={anecdote.id}><li  key={anecdote.id} >{anecdote.content}</li></Link>)}
     </ul>
   </div>
 )
@@ -45,19 +51,31 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
-
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
+    navigate('/')
+  }
+
+  const {reset: resetContent, ...content} = useField("text")
+  const {reset: resetAuthor, ...author} = useField("text")
+  const {reset: resetInfo, ...info} = useField("text")
+
+
+  const resetForm = () => {
+    console.log("Reseting form");
+    
+    resetContent()
+    resetAuthor()
+    resetInfo()
+
   }
 
   return (
@@ -66,21 +84,36 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content} required/>
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author} required/>
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...info} required/>
         </div>
-        <button>create</button>
+        <button type='submit'>Create</button>
+        <button type='button' onClick={resetForm} >Reset</button>
       </form>
     </div>
   )
 
+}
+
+const SelectedAnecdote = ({anecdoteById}) => {
+
+  const id = useParams().id
+  console.log(id);
+  
+  const selectedAnecdote = anecdoteById(Number(id))
+
+  return (
+    <div>
+      <h2>{selectedAnecdote.content}</h2>
+    </div>
+  )
 }
 
 const App = () => {
@@ -104,8 +137,16 @@ const App = () => {
   const [notification, setNotification] = useState('')
 
   const addNew = (anecdote) => {
+
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+
+    setNotification(`a new anecdote "${anecdote.content}" created!`)
+
+    setTimeout(() => {
+      setNotification('')
+    }, 5000);
+
   }
 
   const anecdoteById = (id) =>
@@ -123,14 +164,22 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h1>Software anecdotes</h1>
-      <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
-      <Footer />
-    </div>
+    <Router>
+      <div>
+        <h1>Software anecdotes</h1>
+        <Menu />
+        {notification && 
+        <p> {notification} </p>
+        }
+        <Routes>
+          <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path='about' element={<About />} /> 
+          <Route path='create' element={<CreateNew addNew={addNew}/>} />
+          <Route path='anecdotes/:id' element={<SelectedAnecdote anecdoteById={anecdoteById} />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   )
 }
 
