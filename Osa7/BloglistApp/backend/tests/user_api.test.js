@@ -8,7 +8,6 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const mongoose = require('mongoose')
 
-
 const api = supertest(app)
 
 describe('when there is initially one user at db', () => {
@@ -39,63 +38,67 @@ describe('when there is initially one user at db', () => {
     const usersAtEnd = await helper.usersInDb()
     assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
-    const usernames = usersAtEnd.map(u => u.username)
+    const usernames = usersAtEnd.map((u) => u.username)
     assert(usernames.includes(newUser.username))
   })
 })
 
-  test('creation fails if username already taken', async () => {
-    const usersAtStart = await helper.usersInDb()
+test('creation fails if username already taken', async () => {
+  const usersAtStart = await helper.usersInDb()
 
-    const newUser = {
-      username: 'root',
-      name: 'Erno',
-      password: 'salainen',
-    }
+  const newUser = {
+    username: 'root',
+    name: 'Erno',
+    password: 'salainen',
+  }
 
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
+  const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
 
-    assert(result.body.error.includes('expected `username` to be unique'))
+  assert(result.body.error.includes('expected `username` to be unique'))
 
-    const usersAtEnd = await helper.usersInDb()
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
-  })
+  const usersAtEnd = await helper.usersInDb()
+  assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+})
 
-  test('creation fails if username shorter than 3 characters', async () => {
-    const newUser = {
-      username: 'er',
-      name: 'ShortUsername',
-      password: 'salainen'
-    }
+test('creation fails if username shorter than 3 characters', async () => {
+  const newUser = {
+    username: 'er',
+    name: 'ShortUsername',
+    password: 'salainen',
+  }
 
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
+  const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
 
-    assert(result.body.error.includes('is shorter than the minimum allowed length'))
-  })
+  assert(
+    result.body.error.includes('is shorter than the minimum allowed length')
+  )
+})
 
-  test('creation fails if password shorter than 3 characters', async () => {
-    const newUser = {
-      username: 'longenough',
-      name: 'BadPass',
-      password: '12'
-    }
+test('creation fails if password shorter than 3 characters', async () => {
+  const newUser = {
+    username: 'longenough',
+    name: 'BadPass',
+    password: '12',
+  }
 
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
+  const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
 
-    assert(result.body.error.includes('password must be at least 3 characters long'))
-  })
+  assert(
+    result.body.error.includes('password must be at least 3 characters long')
+  )
+})
 
 after(async () => {
   await User.deleteMany({})

@@ -1,6 +1,10 @@
-const LoginForm = ({ username, password, handleLogin, handleUsernameChange, handlePasswordChange }) => {
-
-
+const LoginForm = ({
+  username,
+  password,
+  handleLogin,
+  handleUsernameChange,
+  handlePasswordChange,
+}) => {
   return (
     <div>
       <h2>Log in to application </h2>
@@ -8,24 +12,25 @@ const LoginForm = ({ username, password, handleLogin, handleUsernameChange, hand
         <label>
           Username
           <input
-            type='text'
+            type="text"
             value={username}
             onChange={(e) => handleUsernameChange(e.target.value)}
           />
-        </label><br/>
+        </label>
+        <br />
         <label>
           Password
           <input
-            type='text'
+            type="text"
             value={password}
             onChange={(e) => handlePasswordChange(e.target.value)}
           />
-        </label><br/>
-        <button type='submit'> Login </button>
+        </label>
+        <br />
+        <button type="submit"> Login </button>
       </form>
     </div>
   )
-
 }
 
 export default LoginForm

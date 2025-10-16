@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
-
   const [showAllInfo, setShowAllInfo] = useState(false)
 
   const blogStyle = {
@@ -9,7 +8,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   const removeBtnStyle = {
@@ -18,33 +17,46 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
     border: 'none',
     padding: '5px 10px',
     borderRadius: '5px',
-    cursor: 'pointer'
+    cursor: 'pointer',
   }
 
   const confirmDeleting = (id) => {
-    const confirmDelete = window.confirm(`Remove Blog ${blog.title} by ${blog.author}?`)
+    const confirmDelete = window.confirm(
+      `Remove Blog ${blog.title} by ${blog.author}?`
+    )
     if (confirmDelete) {
       handleDelete(id)
     }
   }
 
   return (
-    <div  className="blog-list" style={blogStyle}>
-      <p className='blog-title'>{blog.title}</p>
-      <span><button onClick={() => setShowAllInfo(!showAllInfo)}> {showAllInfo ? 'Hide' : 'View'} </button></span>
-      { showAllInfo &&
+    <div className="blog-list" style={blogStyle}>
+      <p className="blog-title">{blog.title}</p>
+      <span>
+        <button onClick={() => setShowAllInfo(!showAllInfo)}>
+          {' '}
+          {showAllInfo ? 'Hide' : 'View'}{' '}
+        </button>
+      </span>
+      {showAllInfo && (
         <>
           <p>Url: {blog.url}</p>
-          <span className='likes'>Likes: {blog.likes}</span>
+          <span className="likes">Likes: {blog.likes}</span>
           <button onClick={() => handleLike(blog.id)}> Like </button>
-          <p>Author:  {blog.author}</p>
-          { currentUser.id === blog.user &&
-            <button style={removeBtnStyle} onClick={() => confirmDeleting(blog.id)}> Remove </button>
-          }
+          <p>Author: {blog.author}</p>
+          {currentUser.id === blog.user && (
+            <button
+              style={removeBtnStyle}
+              onClick={() => confirmDeleting(blog.id)}
+            >
+              {' '}
+              Remove{' '}
+            </button>
+          )}
         </>
-      }
+      )}
 
-      <br/>
+      <br />
     </div>
   )
 }

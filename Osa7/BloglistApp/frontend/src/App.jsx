@@ -17,9 +17,9 @@ const App = () => {
   const [createBlogVisible, setCreateBlogVisible] = useState(false)
 
   useEffect(() => {
-    blogService.getAll().then(blogs => {
+    blogService.getAll().then((blogs) => {
       const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-      setBlogs( sortedBlogs )
+      setBlogs(sortedBlogs)
     })
 
     const loggedUserJSON = window.localStorage.getItem('LoggedBlogAppUser')
@@ -28,7 +28,6 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-
   }, [])
 
   const handleLogin = async (e) => {
@@ -38,20 +37,15 @@ const App = () => {
       const user = await blogService.login({ username, password })
       blogService.setToken(user.token)
       setUser(user)
-      console.log(user);
-      
+      console.log(user)
 
-      window.localStorage.setItem(
-        'LoggedBlogAppUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('LoggedBlogAppUser', JSON.stringify(user))
 
       setUsername('')
       setPassword('')
     } catch {
       setMessage({ message: 'Wrong username or password', type: 'error' })
-      setTimeout(() => (
-        setMessage({ message: null, type: null })
-      ), 5000)
+      setTimeout(() => setMessage({ message: null, type: null }), 5000)
     }
   }
 
@@ -69,9 +63,11 @@ const App = () => {
       blogService.setToken(user.token)
       const newBlog = await blogService.create({ title, author, url })
       setBlogs(blogs.concat(newBlog))
-      
 
-      setMessage({ message: `A new blog ${title} was added by ${user.name}`, type: 'success' })
+      setMessage({
+        message: `A new blog ${title} was added by ${user.name}`,
+        type: 'success',
+      })
 
       setTimeout(() => {
         setMessage({ message: null, type: null })
@@ -84,18 +80,28 @@ const App = () => {
     }
   }
 
-  const handlePasswordChange = (newPassword) => {setPassword(newPassword)}
+  const handlePasswordChange = (newPassword) => {
+    setPassword(newPassword)
+  }
 
-  const handleUsernameChange = (newUsername) => {setUsername(newUsername)}
+  const handleUsernameChange = (newUsername) => {
+    setUsername(newUsername)
+  }
 
-  const handleAuthorChange = (newAuthor) => {setAuthor(newAuthor)}
+  const handleAuthorChange = (newAuthor) => {
+    setAuthor(newAuthor)
+  }
 
-  const handleTitleChange = (newTitle) => {setTitle(newTitle)}
+  const handleTitleChange = (newTitle) => {
+    setTitle(newTitle)
+  }
 
-  const handleUrlChange = (newUrl) => {setUrl(newUrl)}
+  const handleUrlChange = (newUrl) => {
+    setUrl(newUrl)
+  }
 
   const handleLike = async (id) => {
-    const blogToLike = blogs.find(b => b.id === id)
+    const blogToLike = blogs.find((b) => b.id === id)
     console.log(blogToLike)
     const updatedBlog = { ...blogToLike, likes: blogToLike.likes + 1 }
 
@@ -105,31 +111,34 @@ const App = () => {
 
     setBlogs(
       blogs
-        .map(b => b.id !== id ? b : returnedBlog)
+        .map((b) => (b.id !== id ? b : returnedBlog))
         .sort((a, b) => b.likes - a.likes)
     )
   }
 
   const handleDelete = async (id) => {
     try {
-
       await blogService.deleteBlog(id)
-      setBlogs(blogs.filter(b => b.id !== id))
+      setBlogs(blogs.filter((b) => b.id !== id))
 
-      setMessage({ message: 'The blog was succesfully removed', type: 'success' })
+      setMessage({
+        message: 'The blog was succesfully removed',
+        type: 'success',
+      })
 
       setTimeout(() => {
         setMessage({ message: null, type: null })
       }, 5000)
-
     } catch (e) {
-      console.log('error:', e) 
-      setMessage({ message: 'Something went wrong, did not remove the blog', type: 'error' })
+      console.log('error:', e)
+      setMessage({
+        message: 'Something went wrong, did not remove the blog',
+        type: 'error',
+      })
 
       setTimeout(() => {
         setMessage({ message: null, type: null })
       }, 5000)
-
     }
   }
 
@@ -141,28 +150,45 @@ const App = () => {
           <h2>Blogs</h2>
           <span>{user.username} Logged in</span>
           <button onClick={handleLogout}>Logout</button>
-          <br /><br /><br />
+          <br />
+          <br />
+          <br />
           <>
-            { createBlogVisible ? (
+            {createBlogVisible ? (
               <div>
                 <BlogForm
-                  author={author} title={title} url={url}
+                  author={author}
+                  title={title}
+                  url={url}
                   handleAuthorChange={handleAuthorChange}
                   handleTitleChange={handleTitleChange}
                   handleUrlChange={handleUrlChange}
                   HandleAddBlog={HandleAddBlog}
                 />
-                <button onClick={() => setCreateBlogVisible(!createBlogVisible)}> Cancel </button>
+                <button
+                  onClick={() => setCreateBlogVisible(!createBlogVisible)}
+                >
+                  {' '}
+                  Cancel{' '}
+                </button>
               </div>
             ) : (
-              <button onClick={() => setCreateBlogVisible(!createBlogVisible)}> Create new blog </button>
-            )
-            }
+              <button onClick={() => setCreateBlogVisible(!createBlogVisible)}>
+                {' '}
+                Create new blog{' '}
+              </button>
+            )}
           </>
           <br />
-          {blogs.map(blog => 
-            <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} currentUser={user}/>
-          )}
+          {blogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleLike={handleLike}
+              handleDelete={handleDelete}
+              currentUser={user}
+            />
+          ))}
         </div>
       ) : (
         <>
@@ -175,12 +201,17 @@ const App = () => {
                 handleUsernameChange={handleUsernameChange}
                 handlePasswordChange={handlePasswordChange}
               />
-              <button onClick={() => setLoginVisible(!loginVisible)}> Cancel </button>
+              <button onClick={() => setLoginVisible(!loginVisible)}>
+                {' '}
+                Cancel{' '}
+              </button>
             </div>
           ) : (
-            <button onClick={() => setLoginVisible(!loginVisible)}> Login </button>
-          )
-          }
+            <button onClick={() => setLoginVisible(!loginVisible)}>
+              {' '}
+              Login{' '}
+            </button>
+          )}
         </>
       )}
     </>
@@ -194,9 +225,5 @@ const Notification = ({ message, type }) => {
     return null
   }
 
-  return (
-    <div className={`${type}`}>
-      {message}
-    </div>
-  )
+  return <div className={`${type}`}>{message}</div>
 }

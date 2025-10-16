@@ -9,13 +9,15 @@ describe('Blog component', () => {
       title: 'React Testing',
       author: 'Tester',
       url: 'https://example.com/reacttest',
-      likes: 42
+      likes: 42,
     }
 
     const handleLike = vi.fn()
     const handleDelete = vi.fn()
 
-    render(<Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} />)
+    render(
+      <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
+    )
 
     const titleElement = screen.getByText('React Testing')
     expect(titleElement).toBeDefined()
@@ -27,13 +29,15 @@ describe('Blog component', () => {
       title: 'React Testing',
       author: 'Tester',
       url: 'https://example.com/reacttest',
-      likes: 33
+      likes: 33,
     }
 
     const handleLike = vi.fn()
     const handleDelete = vi.fn()
 
-    render(<Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} />)
+    render(
+      <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
+    )
 
     expect(screen.getByText(blog.title)).toBeInTheDocument()
     expect(screen.queryByText(blog.url)).toBeNull()
@@ -55,13 +59,15 @@ describe('Blog component', () => {
       title: 'React Testing',
       author: 'Tester',
       url: 'https://example.com/reacttest',
-      likes: 13
+      likes: 13,
     }
 
     const handleLike = vi.fn()
     const handleDelete = vi.fn()
 
-    render(<Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} />)
+    render(
+      <Blog blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
+    )
 
     const user = userEvent.setup()
 
@@ -76,5 +82,3 @@ describe('Blog component', () => {
     expect(handleLike).toHaveBeenCalledTimes(2)
   })
 })
-
-

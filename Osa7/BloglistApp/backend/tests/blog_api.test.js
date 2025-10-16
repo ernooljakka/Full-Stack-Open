@@ -11,21 +11,21 @@ const api = supertest(app)
 
 const initialBlogs = [
   {
-  title: "JS ja React perusteet",
-  author: "the koodaaja2",
-  url: "https://example.com/JS_React",
-  likes: 22
+    title: 'JS ja React perusteet',
+    author: 'the koodaaja2',
+    url: 'https://example.com/JS_React',
+    likes: 22,
   },
   {
-  title: "Python perusteet",
-  author: "the koodaaja1",
-  url: "https://example.com/Python",
-  likes: 11
+    title: 'Python perusteet',
+    author: 'the koodaaja1',
+    url: 'https://example.com/Python',
+    likes: 11,
   },
 ]
 
 beforeEach(async () => {
-  await Blog.deleteMany({}) 
+  await Blog.deleteMany({})
   await User.deleteMany({})
 
   const newUser = {
@@ -67,21 +67,24 @@ describe('Checking the initial notes', () => {
     const blogs = response.body
 
     //if multiple asserts used, shows the message for the one that fails
-    blogs.forEach(blog => {
+    blogs.forEach((blog) => {
       assert.ok(blog.id, 'Blog should have an id field')
-      assert.strictEqual(blog._id, undefined, '_id should not exist in the response')
+      assert.strictEqual(
+        blog._id,
+        undefined,
+        '_id should not exist in the response'
+      )
     })
   })
 })
 
-
 describe('Adding a new note tests', () => {
   test('a valid blog can be added via POST', async () => {
     const newBlog = {
-      title: "Node.js testaus",
-      author: "the testaaja3",
-      url: "https://example.com/test",
-      likes: 5
+      title: 'Node.js testaus',
+      author: 'the testaaja3',
+      url: 'https://example.com/test',
+      likes: 5,
     }
 
     await api
@@ -94,17 +97,24 @@ describe('Adding a new note tests', () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
 
-    assert.strictEqual(blogs.length, initialBlogs.length + 1, 'Blog count should increase by 1')
+    assert.strictEqual(
+      blogs.length,
+      initialBlogs.length + 1,
+      'Blog count should increase by 1'
+    )
 
-    const titles = blogs.map(b => b.title)
-    assert.ok(titles.includes(newBlog.title), 'New blog title should exist in DB')
+    const titles = blogs.map((b) => b.title)
+    assert.ok(
+      titles.includes(newBlog.title),
+      'New blog title should exist in DB'
+    )
   })
 
   test('likes defaults to 0 if not provided', async () => {
     const newBlog = {
-      title: "Blog without likes",
-      author: "Tester",
-      url: "https://example.com/no-likes"
+      title: 'Blog without likes',
+      author: 'Tester',
+      url: 'https://example.com/no-likes',
     }
 
     const response = await api
@@ -119,9 +129,9 @@ describe('Adding a new note tests', () => {
 
   test('POST fails with 400 if title is missing', async () => {
     const newBlog = {
-      author: "Tester",
-      url: "https://example.com/no-title",
-      likes: 9
+      author: 'Tester',
+      url: 'https://example.com/no-title',
+      likes: 9,
     }
 
     await api
@@ -133,9 +143,9 @@ describe('Adding a new note tests', () => {
 
   test('POST fails with 400 if url is missing', async () => {
     const newBlog = {
-      title: "Blog without url",
-      author: "Tester",
-      likes: 11
+      title: 'Blog without url',
+      author: 'Tester',
+      likes: 11,
     }
 
     await api
@@ -144,7 +154,6 @@ describe('Adding a new note tests', () => {
       .send(newBlog)
       .expect(400)
   })
-
 })
 
 describe('deleting a blog', () => {
@@ -170,10 +179,17 @@ describe('deleting a blog', () => {
       .expect(204)
 
     const blogsAtEnd = await Blog.find({})
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1, 'Blog count should decrease by 1')
+    assert.strictEqual(
+      blogsAtEnd.length,
+      blogsAtStart.length - 1,
+      'Blog count should decrease by 1'
+    )
 
-    const titles = blogsAtEnd.map(b => b.title)
-    assert.ok(!titles.includes(blogToDelete.title), 'Deleted blog should not exist in DB')
+    const titles = blogsAtEnd.map((b) => b.title)
+    assert.ok(
+      !titles.includes(blogToDelete.title),
+      'Deleted blog should not exist in DB'
+    )
   })
 })
 
@@ -190,13 +206,20 @@ describe('Updating blogs likes by one', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    assert.strictEqual(response.body.likes, blogToUpdate.likes + 1, 'Likes should be incremented')
+    assert.strictEqual(
+      response.body.likes,
+      blogToUpdate.likes + 1,
+      'Likes should be incremented'
+    )
 
     const blogInDb = await Blog.findById(blogToUpdate._id)
-    assert.strictEqual(blogInDb.likes, blogToUpdate.likes + 1, 'Likes in DB should be updated')
+    assert.strictEqual(
+      blogInDb.likes,
+      blogToUpdate.likes + 1,
+      'Likes in DB should be updated'
+    )
   })
 })
-
 
 after(async () => {
   await User.deleteMany({})

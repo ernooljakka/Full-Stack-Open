@@ -3,10 +3,8 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 
 usersRouter.get('/', async (request, response, next) => {
-
   try {
-    const users = await User
-    .find({}).populate('blogs', '-user -id -likes')
+    const users = await User.find({}).populate('blogs', '-user -id -likes')
 
     response.json(users)
   } catch (error) {
@@ -19,7 +17,7 @@ usersRouter.post('/', async (request, response, next) => {
 
   if (!password || password.length < 3) {
     return response.status(400).json({
-      error: 'password must be at least 3 characters long'
+      error: 'password must be at least 3 characters long',
     })
   }
 
@@ -39,8 +37,6 @@ usersRouter.post('/', async (request, response, next) => {
   } catch (error) {
     next(error)
   }
-
-
 })
 
 module.exports = usersRouter

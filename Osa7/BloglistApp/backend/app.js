@@ -10,14 +10,17 @@ const cors = require('cors')
 
 const app = express()
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-}))
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+)
 
 const mongoUrl = config.MONGODB_URI
 
 logger.info('connecting to MongoDB...')
-mongoose.connect(mongoUrl)
+mongoose
+  .connect(mongoUrl)
   .then(() => {
     logger.info('connected to MongoDB')
   })
@@ -25,13 +28,12 @@ mongoose.connect(mongoUrl)
     logger.error('error connecting to MongoDB:', error.message)
   })
 
-
 app.use(express.json())
 app.use(middleware.requestLogger)
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the Blog API, go to /api/blogs to see the blogs');
-});
+  res.send('Welcome to the Blog API, go to /api/blogs to see the blogs')
+})
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
@@ -44,7 +46,5 @@ if (process.env.NODE_ENV === 'test') {
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
-
-
 
 module.exports = app
