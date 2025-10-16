@@ -18,7 +18,7 @@
     {
       "content": "Premature optimization is the root of all evil.",
       "id": "25170",
-      "votes": 5
+      "votes": 6
     },
     {
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
@@ -28,11 +28,16 @@
     {
       "id": "e5b9",
       "content": "If it hurts, stop doing it",
-      "votes": 4
+      "votes": 5
     },
     {
       "id": "6803",
       "content": "If you cook food, you should eat it",
+      "votes": 1
+    },
+    {
+      "id": "95e3",
+      "content": "Aamu on välillä väsynyttä aikaa",
       "votes": 1
     }
   ]
