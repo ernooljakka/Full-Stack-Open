@@ -1,6 +1,5 @@
 import axios from 'axios'
 const baseUrl = '/api/blogs'
-const loginUrl = '/api/login'
 
 let token = null
 
@@ -11,15 +10,6 @@ const setToken = (newToken) => {
 const getAll = () => {
   const request = axios.get(baseUrl)
   return request.then((response) => response.data)
-}
-
-const login = async (credentials) => {
-  const config = {
-    headers: { Authorization: token },
-  }
-
-  const response = await axios.post(loginUrl, credentials, config)
-  return response.data
 }
 
 const create = async (newBlog) => {
@@ -45,4 +35,4 @@ const deleteBlog = async (id) => {
   return response.data
 }
 
-export default { getAll, login, setToken, create, update, deleteBlog }
+export default { getAll, setToken, create, update, deleteBlog }
