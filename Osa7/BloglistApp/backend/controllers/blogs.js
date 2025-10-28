@@ -95,4 +95,24 @@ blogsRouter.put('/:id', async (request, response, next) => {
   }
 })
 
+blogsRouter.patch('/:id/comments', async (request, response, next) => {
+  const body = request.body
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      { $push: { comments: body.comment } },
+      { new: true, runValidators: true }
+    )
+
+    if (updatedBlog) {
+      response.json(updatedBlog)
+    } else {
+      response.status(404).json({ error: 'blog not found' })
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = blogsRouter

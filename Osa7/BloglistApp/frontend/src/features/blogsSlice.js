@@ -22,6 +22,13 @@ const blogSlice = createSlice({
     addBlog(state, action) {
       state.push(action.payload)
     },
+    commentBlog(state, action) {
+      const { id, comment } = action.payload
+      const blog = state.find((b) => b.id === id)
+      if (blog) {
+        blog.comments.push(comment)
+      }
+    },
     removeBlog(state, action) {
       return state.filter((blog) => blog.id !== action.payload)
     },
@@ -29,7 +36,8 @@ const blogSlice = createSlice({
 })
 
 export default blogSlice.reducer
-export const { setBlogs, likeBlog, addBlog, removeBlog } = blogSlice.actions
+export const { setBlogs, likeBlog, addBlog, removeBlog, commentBlog } =
+  blogSlice.actions
 
 //should add try/catch here to check errors from backend
 export const initializeBlogs = () => async (dispatch) => {
@@ -48,6 +56,16 @@ export const updateBlog = (blog) => async (dispatch) => {
     await blogService.update(updatedBlog, blog.id)
     dispatch(likeBlog(blog.id))
     dispatch(setNotification(`You liked ${blog.title}`, 'success', 2000))
+  } catch (err) {
+    dispatch(setNotification('Something went wrong', 'error', 5000))
+  }
+}
+
+export const updateComments = (blog, comment) => async (dispatch) => {
+  try {
+    await blogService.updateComments(comment, blog.id)
+    dispatch(commentBlog({ id: blog.id, comment }))
+    dispatch(setNotification(`You commented on ${blog.title}`, 'success', 3000))
   } catch (err) {
     dispatch(setNotification('Something went wrong', 'error', 5000))
   }

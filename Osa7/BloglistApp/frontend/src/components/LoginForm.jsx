@@ -1,34 +1,47 @@
-const LoginForm = ({
-  username,
-  password,
-  handleLogin,
-  handleUsernameChange,
-  handlePasswordChange,
-}) => {
+import { useState } from 'react'
+
+const LoginForm = ({ onLogin }) => {
+  const [loginVisible, setLoginVisible] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    onLogin({ username, password })
+    setUsername('')
+    setPassword('')
+    setLoginVisible(false)
+  }
+
+  if (!loginVisible) {
+    return <button onClick={() => setLoginVisible(true)}>Login</button>
+  }
+
   return (
     <div>
-      <h2>Log in to application </h2>
-      <form onSubmit={handleLogin}>
+      <h2>Log in to application</h2>
+      <form onSubmit={handleSubmit}>
         <label>
           Username
           <input
             type="text"
             value={username}
-            onChange={(e) => handleUsernameChange(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </label>
         <br />
         <label>
           Password
           <input
-            type="text"
+            type="password"
             value={password}
-            onChange={(e) => handlePasswordChange(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </label>
         <br />
-        <button type="submit"> Login </button>
+        <button type="submit">Login</button>
       </form>
+      <button onClick={() => setLoginVisible(false)}>Cancel</button>
     </div>
   )
 }

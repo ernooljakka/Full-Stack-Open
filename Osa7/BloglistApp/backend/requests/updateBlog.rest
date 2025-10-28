@@ -1,11 +1,8 @@
-POST http://localhost:3003/api/blogs
+### Add a comment to a blog
+PUT http://localhost:3003/api/blogs/69009ec5bad8567b610ad881/comments
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkVybm8iLCJpZCI6IjY4ZWRmMWYyNmI5YWI0MjMwMzJkZmMyZSIsImlhdCI6MTc2MTY0ODE0NywiZXhwIjoxNzYxNjUxNzQ3fQ.wCxGWSjS9k215DNAi6RRoA3Sor_IgJ-h-oIMZehT9k0
 
 {
-  "title": "Matikka 2",
-  "author": "matikkamies",
-  "url": "https://example.com/Matikka2",
-  "likes": 35,
-  "comments": []
+  "comment": "This is a new comment"
 }

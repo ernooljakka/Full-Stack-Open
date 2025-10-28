@@ -26,6 +26,11 @@ const update = async (blog, id) => {
   return response.data
 }
 
+const updateComments = async (comment, id) => {
+  const response = await axios.patch(`${baseUrl}/${id}/comments`, { comment })
+  return response.data
+}
+
 const deleteBlog = async (id) => {
   const config = {
     headers: { Authorization: token },
@@ -35,4 +40,4 @@ const deleteBlog = async (id) => {
   return response.data
 }
 
-export default { getAll, setToken, create, update, deleteBlog }
+export default { getAll, setToken, create, update, deleteBlog, updateComments }
