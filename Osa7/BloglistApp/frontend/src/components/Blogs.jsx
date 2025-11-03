@@ -2,31 +2,15 @@ import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { updateBlog, deleteBlog } from '../features/blogsSlice'
 import { Link } from 'react-router-dom'
+import { Box, Button, Typography, Paper } from '@mui/material'
 
-const Blog = () => {
+const Blogs = () => {
   const [showAllInfo, setShowAllInfo] = useState({})
 
   const dispatch = useDispatch()
 
   const blogs = useSelector((state) => state.blogs)
   const user = useSelector((state) => state.user)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
-  const removeBtnStyle = {
-    color: 'white',
-    backgroundColor: 'red',
-    border: 'none',
-    padding: '5px 10px',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  }
 
   const confirmDeleting = (id, blog) => {
     const confirmDelete = window.confirm(
@@ -46,14 +30,38 @@ const Blog = () => {
   }
 
   return (
-    <div className="blog-list-container">
+    <Box display="flex" flexDirection="column" width="100vw">
       {blogs.map((blog) => (
-        <div key={blog.id} className="blog-list" style={blogStyle}>
+        <Box
+          key={blog.id}
+          sx={{
+            p: 2,
+            boxShadow: 10,
+            mb: 1,
+            border: '2px black',
+            mr: 2,
+            backgroundColor: '#2d2f46ff',
+            borderRadius: 1,
+          }}
+        >
           <p className="blog-title">
-            <Link to={`blogs/${blog.id}`}>{blog.title}</Link>
+            <Typography color="white" to={`blogs/${blog.id}`} component={Link}>
+              {blog.title}
+            </Typography>
           </p>
           <span>
-            <button
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#2d2f46ff',
+                color: 'white',
+                border: '1px solid white',
+                '&:hover': {
+                  backgroundColor: '#3b3d5aff',
+                  border: '1px solid white',
+                },
+                mb: 2,
+              }}
               onClick={() =>
                 setShowAllInfo((prev) => ({
                   ...prev,
@@ -62,31 +70,54 @@ const Blog = () => {
               }
             >
               {showAllInfo[blog.id] ? 'Hide' : 'View'}
-            </button>
+            </Button>
           </span>
 
           {showAllInfo[blog.id] && (
             <>
-              <p>Url: {blog.url}</p>
-              <span className="likes">Likes: {blog.likes}</span>
-              <button onClick={() => handleLike(blog)}>Like</button>
-              <p>Author: {blog.author}</p>
+              <Typography color="white" sx={{ mb: 2 }}>
+                Url: {blog.url}
+              </Typography>
+              <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
+                <Typography color="white">Likes: {blog.likes}</Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleLike(blog)}
+                  sx={{
+                    backgroundColor: '#2d2f46ff',
+                    ml: 2,
+                    color: 'white',
+                    border: '1px solid white',
+                    '&:hover': {
+                      backgroundColor: '#3b3d5aff',
+                      border: '1px solid white',
+                    },
+                  }}
+                >
+                  Like
+                </Button>
+              </Box>
+              <Typography color="white" sx={{ mb: 2 }}>
+                Author: {blog.author}
+              </Typography>
 
               {(user.id === blog.user || user.id === blog.user.id) && (
-                <button
-                  style={removeBtnStyle}
+                <Button
+                  variant="contained"
+                  color="error"
                   onClick={() => confirmDeleting(blog.id, blog)}
                 >
                   Remove
-                </button>
+                </Button>
               )}
             </>
           )}
           <br />
-        </div>
+        </Box>
       ))}
-    </div>
+    </Box>
   )
 }
 
-export default Blog
+export default Blogs

@@ -13,6 +13,7 @@ import User from './components/User'
 import blogService from './services/blogs'
 import Blog from './components/Blog'
 import Navigation from './components/Navigation'
+import { Typography } from '@mui/material'
 
 const App = () => {
   const user = useSelector((state) => state.user)
@@ -36,16 +37,17 @@ const App = () => {
   return (
     <>
       <Notification />
-      <Navigation />
-      <div>
-        <h2>Blogs</h2>
-      </div>
+      <div></div>
       <Routes>
         <Route
           path="/"
           element={
             user ? (
               <div>
+                <Navigation />
+                <Typography variant="h4" sx={{ mb: 2 }}>
+                  Blogs
+                </Typography>
                 <BlogForm onAddBlog={handleAddBlog} />
                 <Blogs />
               </div>
@@ -54,9 +56,33 @@ const App = () => {
             )
           }
         />
-        <Route path="users" element={<Users />} />
-        <Route path="users/:id" element={<User />} />
-        <Route path="blogs/:id" element={<Blog />} />
+        <Route
+          path="users"
+          element={
+            <>
+              <Navigation />
+              <Users />
+            </>
+          }
+        />
+        <Route
+          path="users/:id"
+          element={
+            <>
+              <Navigation />
+              <User />
+            </>
+          }
+        />
+        <Route
+          path="blogs/:id"
+          element={
+            <>
+              <Navigation />
+              <Blog />
+            </>
+          }
+        />
       </Routes>
     </>
   )

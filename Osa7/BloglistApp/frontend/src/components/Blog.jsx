@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { updateBlog } from '../features/blogsSlice'
 import { useState } from 'react'
 import { updateComments } from '../features/blogsSlice'
+import { Button, TextField, Box, Stack, Typography } from '@mui/material'
 
 const Blog = () => {
   const dispatch = useDispatch()
@@ -30,34 +31,74 @@ const Blog = () => {
   return (
     <div>
       <h1>{blog?.title}</h1>
-      <br />
       <p>
         <a href={blog?.url} target="_blank" rel="noopener noreferrer">
           {blog?.url}
         </a>
       </p>
-      <span className="likes">Likes: {blog?.likes}</span>
-      <button onClick={() => handleLike(blog)}>Like</button>
+      <Box display="flex" alignItems="center">
+        <Typography sx={{ mr: 2 }}>Likes: {blog?.likes}</Typography>
+        <Button
+          variant="contained"
+          onClick={() => handleLike(blog)}
+          sx={{
+            backgroundColor: '#2d2f46ff',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#3b3d5aff',
+              border: '1px solid #3b3d5aff',
+            },
+          }}
+        >
+          Like
+        </Button>
+      </Box>
       <p> Added by {blog?.author}</p>
       <div>
         <h2>Comments</h2>
-        <button onClick={() => setShowAddComment(!showAddComment)}>
+        <Button
+          sx={{
+            backgroundColor: '#2d2f46ff',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#3b3d5aff',
+              border: '1px solid #3b3d5aff',
+            },
+            mb: 2,
+          }}
+          onClick={() => setShowAddComment(!showAddComment)}
+        >
           {!showAddComment ? 'Add a comment' : 'Cancel'}
-        </button>
+        </Button>
         <br />
         <br />
         {showAddComment && (
-          <form onSubmit={handleAddComment}>
-            <label>
-              comment
-              <input
-                type="text"
+          <Box component="form" onSubmit={handleAddComment} maxWidth="15vw">
+            <Stack direction="column" spacing={2}>
+              <TextField
+                label="Comment"
+                variant="outlined"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
               />
-            </label>
-            <button type="submit"> Add </button>
-          </form>
+              <Button
+                sx={{
+                  width: '8vw',
+                  backgroundColor: '#2d2f46ff',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#3b3d5aff',
+                    border: '1px solid #3b3d5aff',
+                  },
+                  mb: 2,
+                }}
+                variant="contained"
+                type="submit"
+              >
+                Add
+              </Button>
+            </Stack>
+          </Box>
         )}
         {blog?.comments.length > 0 ? (
           <ul>

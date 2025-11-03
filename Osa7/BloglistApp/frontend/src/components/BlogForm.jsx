@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button, TextField, Box, Stack } from '@mui/material'
 
 const BlogForm = ({ onAddBlog }) => {
   const [formVisible, setFormVisible] = useState(false)
@@ -16,44 +17,91 @@ const BlogForm = ({ onAddBlog }) => {
   }
 
   if (!formVisible) {
-    return <button onClick={() => setFormVisible(true)}>Create new blog</button>
+    return (
+      <Button
+        sx={{
+          backgroundColor: '#2d2f46ff',
+          color: 'white',
+          '&:hover': {
+            backgroundColor: '#3b3d5aff',
+            border: '1px solid white',
+          },
+          mb: 2,
+        }}
+        variant="contained"
+        onClick={() => setFormVisible(true)}
+      >
+        Create new blog
+      </Button>
+    )
   }
 
   return (
-    <div>
+    <Box
+      display="flex"
+      justifyContent="left"
+      alignItems="left"
+      flexDirection="column"
+    >
       <h2>Create new Blog</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Title
-          <input
-            type="text"
+      <Box component="form" onSubmit={handleSubmit}>
+        <Stack spacing={2} sx={{ mb: 2 }}>
+          <TextField
+            label="Title"
+            variant="outlined"
+            fullWidth
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-        </label>
-        <br />
-        <label>
-          Author
-          <input
-            type="text"
+          <TextField
+            label="Author"
+            variant="outlined"
+            fullWidth
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
           />
-        </label>
-        <br />
-        <label>
-          Url
-          <input
-            type="text"
+          <TextField
+            label="Url"
+            variant="outlined"
+            fullWidth
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
-        </label>
-        <br />
-        <button type="submit">Create</button>
-      </form>
-      <button onClick={() => setFormVisible(false)}>Cancel</button>
-    </div>
+        </Stack>
+        <Stack spacing={2} direction="row" sx={{ mb: 2 }}>
+          <Button
+            sx={{
+              backgroundColor: '#2d2f46ff',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#3b3d5aff',
+                border: '1px solid #3b3d5aff',
+              },
+              mb: 2,
+            }}
+            variant="contained"
+            type="submit"
+          >
+            Create
+          </Button>
+          <Button
+            sx={{
+              backgroundColor: '#2d2f46ff',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#3b3d5aff',
+                border: '1px solid #3b3d5aff',
+              },
+              mb: 2,
+            }}
+            variant="contained"
+            onClick={() => setFormVisible(false)}
+          >
+            Cancel
+          </Button>
+        </Stack>
+      </Box>
+    </Box>
   )
 }
 
