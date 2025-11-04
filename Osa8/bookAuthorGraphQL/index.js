@@ -160,10 +160,7 @@ const resolvers = {
         return null;
       }
 
-      authorToUpdate = {
-        ...authorToUpdate,
-        born: args.setBornTo,
-      };
+      authorToUpdate.born = args.setBornTo;
 
       return authorToUpdate;
     },
