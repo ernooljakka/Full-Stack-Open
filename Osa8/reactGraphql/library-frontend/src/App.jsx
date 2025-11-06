@@ -6,13 +6,23 @@ import Notification from "./components/Notification";
 import Recommended from "./components/Recommended";
 import { Routes, Route, Link } from "react-router-dom";
 import { useState } from "react";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useSubscription } from "@apollo/client";
+import { BOOK_ADDED } from "./queries";
 
 const App = () => {
   const [token, setToken] = useState(() =>
     localStorage.getItem("library-user-token")
   );
   const [message, setMessage] = useState({ message: null, type: null });
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const newBook = data.data.bookAdded;
+      window.alert(
+        `New book added: ${newBook.title} by ${newBook.author.name}`
+      );
+    },
+  });
 
   const client = useApolloClient();
 

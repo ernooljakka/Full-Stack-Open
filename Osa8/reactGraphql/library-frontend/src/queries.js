@@ -19,17 +19,36 @@ export const UPDATE_BIRTHYEAR = gql`
   }
 `;
 
+export const BOOK_FRAGMENT = gql`
+  fragment BookFragment on Book {
+    id
+    title
+    published
+    genres
+    author {
+      id
+      name
+      born
+    }
+  }
+`;
+
 export const ALL_BOOKS = gql`
   query AllBooks {
     allBooks {
-      title
-      published
-      author {
-        name
-      }
-      genres
+      ...BookFragment
     }
   }
+  ${BOOK_FRAGMENT}
+`;
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookFragment
+    }
+  }
+  ${BOOK_FRAGMENT}
 `;
 
 export const ADD_BOOK = gql`
