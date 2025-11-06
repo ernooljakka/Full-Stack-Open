@@ -60,7 +60,7 @@ const typeDefs = `
   }
 
   type Mutation {
-    addBook(title: String!, author: String!, published: Int, genres: [String]! ): Book! 
+    addBook(title: String!, author: String!, published: Int!, genres: [String]! ): Book! 
     editAuthor(name: String!, setBornTo: Int!): Author
     createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token
@@ -131,7 +131,7 @@ const resolvers = {
         const book = new Book({
           title: args.title,
           published: args.published,
-          genres: args.genres,
+          genres: args.genres.map((g) => g.toLowerCase().trim()),
           author: author._id,
         });
 
