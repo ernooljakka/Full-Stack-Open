@@ -1,0 +1,8 @@
+### Test valid request
+POST http://localhost:3003/calculate
+Content-Type: application/json
+
+{
+  "target": 3,
+  "daily_exercises": [3, 4, 2, 4.5, 0, 3, 1]
+}
