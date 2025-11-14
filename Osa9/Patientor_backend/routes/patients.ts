@@ -10,19 +10,29 @@ const router = express.Router();
 // Omit -- remove one or more fields from interface or type
 type NonSensitivePatient = Omit<Patient, "ssn">;
 
-type NewPatient = Omit<Patient, "id">;
+type NewPatient = Omit<Patient, "id" | "entries">;
 
 router.get("/", (_req, res) => {
-  const nonSensitivePatients: NonSensitivePatient[] = patients.map(
+  const patient: NonSensitivePatient[] = patients.map(
     ({ ssn, ...rest }) => rest
   );
-  res.json(nonSensitivePatients);
+  res.json(patient);
+});
+
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+
+  const patient: Patient[] = patients.filter((p) => p.id === id);
+
+  console.log(patient[0]);
+
+  res.json(patient[0]);
 });
 
 router.post("/", (req, res) => {
   try {
     const newPatient: NewPatient = checkNewPatient(req.body);
-    const addedPatient: Patient = { id: uuid(), ...newPatient };
+    const addedPatient: Patient = { id: uuid(), entries: [], ...newPatient };
     patients.push(addedPatient);
     res.json(addedPatient);
   } catch (e: any) {
