@@ -1,9 +1,10 @@
 import express from "express";
 import patients from "../data/patients";
 import { checkNewPatient } from "../utils/patientSchema";
-import { Patient } from "../types";
+import { Patient, Entry } from "../types";
 import { v4 as uuid } from "uuid";
 import { z, ZodError } from "zod";
+import { toNewEntry } from "../utils/entryParser";
 
 const router = express.Router();
 
@@ -24,8 +25,6 @@ router.get("/:id", (req, res) => {
 
   const patient: Patient[] = patients.filter((p) => p.id === id);
 
-  console.log(patient[0]);
-
   res.json(patient[0]);
 });
 
@@ -43,6 +42,22 @@ router.post("/", (req, res) => {
       errorMessage += z.prettifyError(e);
     }
     res.status(400).send(errorMessage);
+  }
+});
+
+router.post("/:id/entries", (req, res) => {
+  try {
+    const patient = patients.find((p) => p.id === req.params.id);
+    if (!patient) return res.status(404).send("Patient not found");
+
+    const parsedEntry = toNewEntry(req.body);
+
+    const newEntry: Entry = { id: uuid(), ...parsedEntry };
+    patient.entries.push(newEntry);
+
+    return res.json(newEntry);
+  } catch (e: any) {
+    return res.status(400).send(e.message);
   }
 });
 

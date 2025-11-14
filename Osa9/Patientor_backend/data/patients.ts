@@ -71,6 +71,7 @@ const patients: Patient[] = [
         specialist: "MD House",
         type: "HealthCheck",
         description: "Yearly control visit. Cholesterol levels back to normal.",
+        diagnosisCodes: ["Z57.1", "Z74.3", "M51.2"],
         healthCheckRating: 0,
       },
       {

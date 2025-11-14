@@ -2,11 +2,15 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Patient, Diagnosis } from "../types";
+import EntryDetails from "./EntryDetails";
+import AddEntryForm from "./addEntryForm";
 
 const PatientPage = () => {
   const [patient, setPatient] = useState<Patient | undefined>();
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>();
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const { id } = useParams<{ id: string }>();
+
+  const diagnoseCodes: string[] = diagnoses.map((d) => d.code);
 
   useEffect(() => {
     if (!id) return;
@@ -16,7 +20,6 @@ const PatientPage = () => {
         `http://localhost:3000/api/patients/${id}`
       );
       setPatient(response.data);
-      console.log(response.data);
     };
 
     const fetchDiagnoses = async () => {
@@ -24,7 +27,6 @@ const PatientPage = () => {
         "http://localhost:3000/api/diagnoses"
       );
       setDiagnoses(response.data);
-      console.log(response.data);
     };
     fetchPatient();
     fetchDiagnoses();
@@ -38,19 +40,15 @@ const PatientPage = () => {
       <p> ssn: {patient.ssn} </p>
       <p> occupation {patient.occupation} </p>
       <h3>Entries</h3>
-      <p>
-        {patient.entries[0].date} {patient.entries[0].description}
-      </p>
-      <ul>
-        {patient.entries[0].diagnosisCodes?.map((dc, index) => {
-          const diagnose = diagnoses?.filter((d) => d.code === dc)[0];
-          return (
-            <li key={index}>
-              {dc} {diagnose?.name}
-            </li>
-          );
-        })}
-      </ul>
+      {patient.entries.map((entry) => (
+        <EntryDetails key={entry.id} entry={entry} diagnoses={diagnoses} />
+      ))}
+      <AddEntryForm
+        patientId={patient.id}
+        setPatient={setPatient}
+        patient={patient}
+        diagnoseCodes={diagnoseCodes}
+      />
     </div>
   );
 };

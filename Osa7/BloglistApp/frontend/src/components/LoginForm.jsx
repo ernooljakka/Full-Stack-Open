@@ -19,7 +19,7 @@ const LoginForm = ({ onLogin }) => {
       <Box
         sx={{
           minHeight: '100vh',
-          backgroundColor: '#2d2f46ff', // light teal background
+          backgroundColor: '#2d2f46ff',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
