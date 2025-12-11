@@ -1,46 +1,49 @@
-const bcrypt = require('bcrypt')
-const usersRouter = require('express').Router()
-const User = require('../models/user')
+const bcrypt = require("bcrypt");
+const usersRouter = require("express").Router();
+const User = require("../models/user");
 
-usersRouter.get('/', async (request, response, next) => {
-
+usersRouter.get("/", async (request, response, next) => {
   try {
-    const users = await User
-    .find({}).populate('blogs', '-user -id -likes')
+    const users = await User.find({}).populate("blogs", "-user -id -likes");
 
-    response.json(users)
+    response.json(users);
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+});
 
-usersRouter.post('/', async (request, response, next) => {
-  const { username, name, password } = request.body
+usersRouter.post("/", async (request, response, next) => {
+  const { username, name, password } = request.body;
 
   if (!password || password.length < 3) {
     return response.status(400).json({
-      error: 'password must be at least 3 characters long'
-    })
+      error: "password must be at least 3 characters long",
+    });
   }
-
-  const saltRounds = 10
-  const passwordHash = await bcrypt.hash(password, saltRounds)
-
-  const user = new User({
-    username,
-    name,
-    passwordHash,
-  })
 
   try {
-    const savedUser = await user.save()
+    // Check if username already exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return response.status(400).json({
+        error: "expected `username` to be unique",
+      });
+    }
 
-    response.status(201).json(savedUser)
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    const user = new User({
+      username,
+      name,
+      passwordHash,
+    });
+
+    const savedUser = await user.save();
+    response.status(201).json(savedUser);
   } catch (error) {
-    next(error)
+    next(error);
   }
+});
 
-
-})
-
-module.exports = usersRouter
+module.exports = usersRouter;
