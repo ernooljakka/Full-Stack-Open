@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "Osa4/Bloglist/**"
   pull_request:
     branches:
       - main
+    paths:
+      - "Osa4/Bloglist/**"
 
 jobs:
   lint-and-test:
