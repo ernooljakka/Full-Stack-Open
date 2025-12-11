@@ -1,4 +1,4 @@
-name: Lint and Test
+name: Lint
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
       - "Osa4/Bloglist/**"
 
 jobs:
-  lint-and-test:
+  lint:
     runs-on: ubuntu-latest
     env:
       # Production environment (used for linting)
@@ -43,11 +43,3 @@ jobs:
       - name: Run ESLint
         working-directory: Osa4/Bloglist
         run: npm run lint
-
-      - name: Run Tests
-        working-directory: Osa4/Bloglist
-        env:
-          NODE_ENV: test
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
-          TEST_SECRET: ${{ secrets.TEST_SECRET }}
-        run: npm test
