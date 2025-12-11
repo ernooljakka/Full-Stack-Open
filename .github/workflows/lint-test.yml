@@ -26,10 +26,13 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
+        working-directory: Osa4/Bloglist
         run: npm install
 
       - name: Run ESLint
+        working-directory: Osa4/Bloglist
         run: npm run lint
 
       - name: Run Tests
+        working-directory: Osa4/Bloglist
         run: npm test
