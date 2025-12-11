@@ -16,6 +16,7 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
     env:
+      # Production environment (used for linting)
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       SECRETKEY: ${{ secrets.SECRET_KEY }}
     steps:
@@ -27,6 +28,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: Osa4/Bloglist/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('Osa4/Bloglist/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         working-directory: Osa4/Bloglist
         run: npm install
@@ -37,4 +46,8 @@ jobs:
 
       - name: Run Tests
         working-directory: Osa4/Bloglist
+        env:
+          NODE_ENV: test
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          TEST_SECRET: ${{ secrets.TEST_SECRET }}
         run: npm test
