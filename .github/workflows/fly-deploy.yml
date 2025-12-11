@@ -1,0 +1,68 @@
+name: Fly Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Osa4/Bloglist/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "Osa4/Bloglist/**"
+
+jobs:
+  deploy:
+    name: Deploy Bloglist App
+    runs-on: ubuntu-latest
+    concurrency: deploy-group
+    outputs:
+      deploy_condition: ${{ steps.set_condition.outputs.condition }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Fly CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Set deployment condition
+        id: set_condition
+        env:
+          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+        run: |
+          CONDITION=false
+          # Convert JSON array to Bash array
+          MESSAGES=($(echo "$COMMIT_MESSAGES" | jq -r '.[]'))
+          for msg in "${MESSAGES[@]}"; do
+            if [[ "$msg" == *"release"* ]]; then
+              CONDITION=true
+              break
+            fi
+          done
+          echo "condition=$CONDITION" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Fly
+        if: ${{ github.event_name == 'push' && steps.set_condition.outputs.condition == 'true' }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          cd Osa4/Bloglist
+          flyctl deploy --remote-only --yes
+
+  tag_release:
+    name: Tag Release
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && needs.deploy.outputs.deploy_condition == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          DRY_RUN: false
