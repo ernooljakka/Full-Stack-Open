@@ -18,7 +18,7 @@ jobs:
     env:
       # Production environment (used for linting)
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
-      SECRETKEY: ${{ secrets.SECRET_KEY }}
+      SECRETKEY: ${{ secrets.SECRETKEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
