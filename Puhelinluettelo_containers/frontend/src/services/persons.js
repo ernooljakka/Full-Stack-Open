@@ -1,0 +1,21 @@
+import axios from 'axios'
+
+const baseUrl = import.meta.env.VITE_APP_BACKEND_URL
+
+const getAll = () => {
+  return axios.get(baseUrl).then(res => res.data)
+}
+
+const create = (newObject) => {
+  return axios.post(baseUrl, newObject).then(res => res.data)
+}
+
+const update = (id, newObject) => {
+  return axios.put(`${baseUrl}${id}`, newObject).then(res => res.data)
+}
+
+const deletePerson = (id) => {
+  return axios.delete(`${baseUrl}${id}`).then(res => res.status)
+}
+
+export default { getAll, create, update, deletePerson }
